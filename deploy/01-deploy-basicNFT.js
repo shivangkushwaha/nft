@@ -18,3 +18,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     }
     console.log("---Deployment And Verification Done Successfully---")
 }
+module.exports.tags = ["all", "basicnft", "main"]
