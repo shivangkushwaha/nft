@@ -5,12 +5,15 @@ require("dotenv").config()
 
 const pinataApiKey = process.env.PINATA_API_KEY
 const pinataApiSecret = process.env.PINATA_API_SECRET
-const pinata = await pinataSDk(pinataApiKey, pinataApiSecret)
+const pinata = new pinataSDk(pinataApiKey, pinataApiSecret)
 async function storeImages(imageFilePath) {
     const fullImagesPath = path.resolve(imageFilePath)
+
     const files = fs.readdirSync(fullImagesPath)
     let responses = []
     for (const fileIndex in files) {
+        console.log('fileIndex', fileIndex)
+        console.log(`File Name`, `${fullImagesPath}/${files[fileIndex]}`)
         const redableStramFromFile = fs.createReadStream(`${fullImagesPath}/${files[fileIndex]}`)
         try {
             const response = await pinata.pinFileToIPFS(redableStramFromFile)

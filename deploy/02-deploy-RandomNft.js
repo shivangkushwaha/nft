@@ -1,8 +1,10 @@
 const { network } = require("hardhat");
 const { developmentChains, networkConfig } = require("../helper-hardhat-config")
 const { verify } = require("../utils/verify")
+
 const { storeImages, storeTokenUriMetadata } = require("../utils/uploadToPinata")
 const imagestLocations = "./images/randomNft"
+const FUND_AMOUNT = "10000000000000000"
 const metadataTemplate = {
     name: "",
     description: "",
@@ -33,6 +35,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         const tx = await vrfCoordinatorv2Mock.createSubscription();
         const txRecipt = await tx.wait(1);
         subscriptionId = txRecipt.events[0].args.subId;
+        await vrfCoordinatorv2Mock.fundSubscription(subscriptionId, FUND_AMOUNT)
     }
     else {
         vrfcoordinatorV2Adress = networkConfig[chainId].vrfCoordinatorV2
@@ -40,6 +43,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     }
     console.log("All values Found....")
     // await storeImages(imagestLocations)
+    console.log('tokenUris', tokenUris)
     const args = [
         vrfcoordinatorV2Adress,
         subscriptionId,
@@ -68,7 +72,7 @@ module.exports.tags = ["all", "basicnft", "main"]
 
 
 const handleTokenUris = async () => {
-    tokrnUris = []
+    let tokrnUris = []
     // string Image On IPFS
     // Store the metadata in IPFS
     const { responses: imageUploadedResponses, files } = await storeImages(imagestLocations);
@@ -86,7 +90,7 @@ const handleTokenUris = async () => {
     }
     console.log('*********Token Uris uploaded**********')
     console.log(tokrnUris)
-    return tokenUris;
+    return tokrnUris;
 }
 
 
